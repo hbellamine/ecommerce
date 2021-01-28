@@ -38,5 +38,6 @@ export const handleUserProfile = async (userAuth, additionalData) => {
     }
   }
 
+  //we return userRef to update our local components with user informations
   return userRef;
 };

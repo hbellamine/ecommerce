@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./styles.scss";
 
+import { auth, handleUserProfile } from "./../../firebase/utils";
 import FormInput from "./../../components/Forms/FormInput";
 import Button from "./../Forms/Button";
 
@@ -9,6 +10,7 @@ const initialState = {
   email: "",
   password: "",
   confirmPassword: "",
+  errors: [],
 };
 class Signup extends Component {
   constructor(props) {
@@ -19,7 +21,42 @@ class Signup extends Component {
 
     this.handleChange = this.handleChange.bind(this);
   }
+  handleFormSubmit = async (event) => {
+    event.preventDefault(); //prevent reloading the page
+    const {
+      displayName,
+      email,
+      password,
+      confirmPassword,
+      errors,
+    } = this.state;
 
+    //check if password matches
+
+    if (password !== confirmPassword) {
+      const err = ["Password Don't match"];
+      this.setState({
+        errors: err,
+      });
+      return;
+    }
+
+    try {
+      const { user } = await auth.createUserWithEmailAndPassword(
+        email,
+        password
+      );
+
+      await handleUserProfile(user, { displayName });
+
+      this.setState({
+        ...initialState
+      })
+
+    } catch(err) {
+      console.log(err);
+    }
+  };
   handleChange(e) {
     const { name, value } = e.target;
     this.setState({
@@ -27,45 +64,58 @@ class Signup extends Component {
     });
   }
   render() {
-    const { displayName, email, password, confirmPassword } = this.state;
+    const {
+      displayName,
+      email,
+      password,
+      confirmPassword,
+      errors,
+    } = this.state;
     return (
       <div className="signup">
         <div className="wrap">
-          <h2>signup</h2>
-          <form>
-            <FormInput
-              type="text"
-              name="displayName"
-              value={displayName}
-              placeholder="Full Name"
-              onChange={this.handleChange}
-            />
-            <FormInput
-              type="email"
-              name="email"
-              value={email}
-              placeholder="Email"
-              onChange={this.handleChange}
-            />
-            <FormInput
-              type="password"
-              name="password"
-              value={password}
-              placeholder="Password"
-              onChange={this.handleChange}
-            />
-            <FormInput
-              type="password"
-              name="confirmPassword"
-              value={confirmPassword}
-              placeholder="Password confirmation"
-              onChange={this.handleChange}
-            />
+          <h2>Signup</h2>
+          {errors.length > 0 && (
+            <ul>
+              {errors.map((err, index) => {
+                return <li key={index}>{err}</li>;
+              })}
+            </ul>
+          )}
+          <div className="formWrap">
+            <form onSubmit={this.handleFormSubmit}>
+              <FormInput
+                type="text"
+                name="displayName"
+                value={displayName}
+                placeholder="Full Name"
+                onChange={this.handleChange}
+              />
+              <FormInput
+                type="email"
+                name="email"
+                value={email}
+                placeholder="Email"
+                onChange={this.handleChange}
+              />
+              <FormInput
+                type="password"
+                name="password"
+                value={password}
+                placeholder="Password"
+                onChange={this.handleChange}
+              />
+              <FormInput
+                type="password"
+                name="confirmPassword"
+                value={confirmPassword}
+                placeholder="Password confirmation"
+                onChange={this.handleChange}
+              />
 
-            <Button type="submit">
-              Register
-            </Button>
-          </form>
+              <Button type="submit">Register</Button>
+            </form>
+          </div>
         </div>
       </div>
     );
