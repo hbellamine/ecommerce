@@ -78,7 +78,7 @@ const Signup = (props) => {
             name="displayName"
             value={displayName}
             placeholder="Full Name"
-            onChange={(e) => {
+            handleChange={(e) => {
               setDisplayName(e.target.value);
             }}
           />
@@ -87,7 +87,7 @@ const Signup = (props) => {
             name="email"
             value={email}
             placeholder="Email"
-            onChange={(e) => {
+            handleChange={(e) => {
               setEmail(e.target.value);
             }}
           />
@@ -96,7 +96,7 @@ const Signup = (props) => {
             name="password"
             value={password}
             placeholder="Password"
-            onChange={(e) => {
+            handleChange={(e) => {
               setPassword(e.target.value);
             }}
           />
@@ -105,7 +105,7 @@ const Signup = (props) => {
             name="confirmPassword"
             value={confirmPassword}
             placeholder="Password confirmation"
-            onChange={(e) => {
+            handleChange={(e) => {
               setConfirmPassword(e.target.value);
             }}
           />
