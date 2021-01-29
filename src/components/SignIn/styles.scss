@@ -1,27 +1,12 @@
-.signin {
-  display: block;
-  width: 100%;
-  max-width: 40rem;
-  border: 1px solid black;
-  margin: 4rem auto 6rem;
+.socialSignin {
+  margin: 0.5rem auto 0;
 }
 
-.wrap {
-  padding: 10px;
-
-  h2 {
-    font-size: 22px;
-    line-height: 1;
-    font-weight: 400;
-    text-transform: uppercase;
-    display: block;
-    width: 100%;
-    text-align: center;
-    margin: 0 auto 3rem;
-    padding: 0;
-  }
-  .socialSignin {
-      margin: .5rem auto 0;
-      
-  }
+.links{
+  display:'block';
+  width:100%;
+  margin:1.5rem auto 0
+}
+a{
+  color:black
 }
