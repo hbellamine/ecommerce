@@ -1,9 +1,9 @@
 import React from "react";
-import {connect} from 'react-redux'
+import { connect } from "react-redux";
 import "./styles.scss";
 import { Link } from "react-router-dom";
 import Logo from "./../../assets/logo.png";
-import {auth} from './../../firebase/utils'
+import { auth } from "./../../firebase/utils";
 
 const Header = (props) => {
   const { currentUser } = props;
@@ -19,16 +19,23 @@ const Header = (props) => {
           {currentUser && (
             <ul>
               <li>
-                <span style={{cursor:"pointer"}} onClick={()=>auth.signOut()}>
+                <Link to="/dashboard">Dashboard</Link>
+              </li>
+              <li>
+                <span
+                  style={{ cursor: "pointer" }}
+                  onClick={() => auth.signOut()}
+                >
                   LOGOUT
                 </span>
               </li>
             </ul>
-          )
-
-          }
+          )}
           {!currentUser && (
             <ul>
+              <li>
+                <Link to="/dashboard">Dashboard</Link>
+              </li>
               <li>
                 <Link to="/registration">Register</Link>
               </li>
@@ -49,7 +56,7 @@ Header.defaultProps = {
   currentUser: null,
 };
 
-const mapStateTopProps = ({user}) => ({
-  currentUser: user.currentUser
-})
-export default connect(mapStateTopProps,null)(Header);
+const mapStateTopProps = ({ user }) => ({
+  currentUser: user.currentUser,
+});
+export default connect(mapStateTopProps, null)(Header);

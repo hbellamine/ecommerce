@@ -7,3 +7,4 @@ export const middlewares = [logger]; //shows the events that happens in the redu
 export const store = createStore(rootReducer,applyMiddleware(...middlewares));
 
 export default store;
+ 
