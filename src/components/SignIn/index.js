@@ -4,7 +4,7 @@ import "./styles.scss";
 import { signInWithGoogle, auth } from "./../../firebase/utils";
 import FormInput from "./../Forms/FormInput";
 import AuthWrapper from "./../AuthWrapper";
-import { Link } from "react-router-dom";
+import { Link,withRouter } from "react-router-dom";
 
 const SignIn = (props) => {
   const [email, setEmail] = useState("");
@@ -12,6 +12,7 @@ const SignIn = (props) => {
   const resetForm = () => {
     setEmail("");
     setPassword("");
+    props.history.push("/")
   };
   const handleSubmit = async (e) => {
     //to prevent the reloading of the page when the form is submitted
@@ -61,4 +62,4 @@ const SignIn = (props) => {
   );
 };
 
-export default SignIn;
+export default withRouter(SignIn);
