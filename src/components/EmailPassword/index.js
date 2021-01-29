@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import {withRouter} from 'react-router-dom'
+import React, { useState } from "react";
+import { withRouter } from "react-router-dom";
 import "./styles.scss";
 import AuthWrapper from "../AuthWrapper";
 
@@ -7,32 +7,19 @@ import FormInput from "./../Forms/FormInput";
 import Button from "./../Forms/Button";
 import { auth } from "./../../firebase/utils";
 
-const initialState = {
-  email: "",
-  errors:[]
-};
+const EmailPassword = (props) => {
+  const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState("");
 
-class EmailPassword extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...initialState,
-    };
-    this.handleChange = this.handleChange.bind(this);
-  }
+  const reset = () => {
+    setEmail("");
+    setErrors("");
+  };
 
-  handleChange(e) {
-    const { name, value } = e.target;
-    this.setState({
-      [name]: value,
-    });
-  }
-
-  handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const { email } = this.state;
       const config = {
         //page where to send the user when he reset the email
         url: "http://localhost:3000/login",
@@ -40,53 +27,46 @@ class EmailPassword extends Component {
       await auth
         .sendPasswordResetEmail(email, config)
         .then(() => {
-            //history is available because we imported withRouter 
-            this.props.history.push('/login')
+          //history is available because we imported withRouter
+          this.props.history.push("/login");
         })
         .catch(() => {
-          const err= ['Email not found. Please Try Again.']
-          this.setState({
-              errors:err
-          })
+          const err = ["Email not found. Please Try Again."];
+          setErrors(err);
         });
     } catch (err) {
       //console.log(err)
     }
   };
 
-  render() {
-    const { email,errors } = this.state;
-    const configAuthWrapper = {
-      headline: "Email Password",
-    };
-    return (
-      <AuthWrapper {...configAuthWrapper}>
-        <div className="formWrap">
-            {errors.length >0 && (
-                <ul>
-                    {errors.map((e,index)=>{
-                        return (
-                            <li key={index}>
-                                {e}
-                            </li>
-                        )
-                    })}
-                </ul>
-            )}
-          <form onSubmit={this.handleSubmit}>
-            <FormInput
-              type="email"
-              name="email"
-              value={email}
-              placeholder="Email"
-              onChange={this.handleChange}
-            />
-            <Button type="submit">Email Password</Button>
-          </form>
-        </div>
-      </AuthWrapper>
-    );
-  }
-}
+  const configAuthWrapper = {
+    headline: "Email Password",
+  };
+  return (
+    <AuthWrapper {...configAuthWrapper}>
+      <div className="formWrap">
+        {errors.length > 0 && (
+          <ul>
+            {errors.map((e, index) => {
+              return <li key={index}>{e}</li>;
+            })}
+          </ul>
+        )}
+        <form onSubmit={handleSubmit}>
+          <FormInput
+            type="email"
+            name="email"
+            value={email}
+            placeholder="Email"
+            handleChange={(e) => {
+              setEmail(e.target.value);
+            }}
+          />
+          <Button type="submit">Email Password</Button>
+        </form>
+      </div>
+    </AuthWrapper>
+  );
+};
 
 export default withRouter(EmailPassword);
