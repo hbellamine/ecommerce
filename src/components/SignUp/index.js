@@ -1,57 +1,60 @@
-import React, { useState } from "react";
-import {withRouter} from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { signUpUser } from "./../../redux/User/user.actions";
+import { withRouter } from "react-router-dom";
 import "./styles.scss";
 
-import { auth, handleUserProfile } from "./../../firebase/utils";
 import AuthWrapper from "./../AuthWrapper";
 import FormInput from "./../../components/Forms/FormInput";
 import Button from "./../Forms/Button";
 
-const initialState = {
-  displayName: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-  errors: [],
-};
+// Mapping the variables we need to use from Redux
+const mapState = ({ user }) => ({
+  signUpSuccess: user.signUpSuccess,
+  signUpError: user.signUpError,
+});
 const Signup = (props) => {
+  // destructuring what we need to use from mapstate using useSelector hooks
+  const { signUpSuccess, signUpError } = useSelector(mapState);
+
+  //useDispatch allows to dispatch the function we want from the redux store without need of using mapStateToDispatch and without Connect
+  const dispatch = useDispatch();
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState("");
 
- const handleFormSubmit = async (event) => {
-    event.preventDefault(); //prevent reloading the page
-
-    const resetForm = () => {
-      setDisplayName("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
-      setErrors("");
-    };
-    //check if password matches
-
-    if (password !== confirmPassword) {
-      const err = ["Password Don't match"];
-      setErrors(err);
-      return;
-    }
-
-    try {
-      const { user } = await auth.createUserWithEmailAndPassword(
-        email,
-        password
-      );
-
-      await handleUserProfile(user, { displayName });
-
+  useEffect(() => {
+    if (signUpSuccess) {
       resetForm();
-      props.history.push("/")
-    } catch (err) {
-      console.log(err);
+      props.history.push("/");
     }
+  }, [signUpSuccess]);
+
+  useEffect(() => {
+    if (Array.isArray(signUpError) && signUpError.length > 0) {
+      setErrors(signUpError);
+    }
+  }, [signUpError]);
+
+  const resetForm = () => {
+    setDisplayName("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setErrors("");
+  };
+  const handleFormSubmit = (event) => {
+    event.preventDefault(); //prevent reloading the page
+    dispatch(
+      signUpUser({
+        displayName,
+        email,
+        password,
+        confirmPassword,
+      })
+    );
   };
   // handleChange(e) {
   //   const { name, value } = e.target;
