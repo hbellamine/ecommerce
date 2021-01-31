@@ -1,28 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "./../Forms/Button";
+import { signInUser } from "./../../redux/User/user.actions";
 import "./styles.scss";
-import { signInWithGoogle, auth } from "./../../firebase/utils";
+import { signInWithGoogle } from "./../../firebase/utils";
 import FormInput from "./../Forms/FormInput";
 import AuthWrapper from "./../AuthWrapper";
-import { Link,withRouter } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+
+const mapState = ({ user }) => ({
+  signInSuccess: user.signInSuccess,
+});
 
 const SignIn = (props) => {
+  const { signInSuccess } = useSelector(mapState);
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (signInSuccess) {
+      resetForm();
+      props.history.push("/");
+    }
+  }, [signInSuccess]);
+
   const resetForm = () => {
     setEmail("");
     setPassword("");
-    props.history.push("/")
   };
-  const handleSubmit = async (e) => {
+
+  const handleSubmit = (e) => {
     //to prevent the reloading of the page when the form is submitted
     e.preventDefault();
-    try {
-      await auth.signInWithEmailAndPassword(email, password);
-      resetForm();
-    } catch (err) {
-      //console.log(err)
-    }
+    dispatch(signInUser({ email, password }));
   };
 
   const configAuthWrapper = {
