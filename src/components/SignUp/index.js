@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { signUpUser,resetAllAuthForms } from "./../../redux/User/user.actions";
+import { signUpUserStart } from "./../../redux/User/user.actions";
 import { withRouter } from "react-router-dom";
 import "./styles.scss";
 
@@ -10,12 +10,12 @@ import Button from "./../Forms/Button";
 
 // Mapping the variables we need to use from Redux
 const mapState = ({ user }) => ({
-  signUpSuccess: user.signUpSuccess,
-  signUpError: user.signUpError,
+  currentUser: user.currentUser,
+  userErr: user.userErr,
 });
 const Signup = (props) => {
   // destructuring what we need to use from mapstate using useSelector hooks
-  const { signUpSuccess, signUpError } = useSelector(mapState);
+  const { currentUser, userErr } = useSelector(mapState);
 
   //useDispatch allows to dispatch the function we want from the redux store without need of using mapStateToDispatch and without Connect
   const dispatch = useDispatch();
@@ -26,18 +26,17 @@ const Signup = (props) => {
   const [errors, setErrors] = useState("");
 
   useEffect(() => {
-    if (signUpSuccess) {
+    if (currentUser) {
       resetForm();
-      dispatch(resetAllAuthForms());
       props.history.push("/");
     }
-  }, [signUpSuccess]);
+  }, [currentUser]);
 
   useEffect(() => {
-    if (Array.isArray(signUpError) && signUpError.length > 0) {
-      setErrors(signUpError);
+    if (Array.isArray(userErr) && userErr.length > 0) {
+      setErrors(userErr);
     }
-  }, [signUpError]);
+  }, [userErr]);
 
   const resetForm = () => {
     setDisplayName("");
@@ -49,7 +48,7 @@ const Signup = (props) => {
   const handleFormSubmit = (event) => {
     event.preventDefault(); //prevent reloading the page
     dispatch(
-      signUpUser({
+      signUpUserStart({
         displayName,
         email,
         password,
