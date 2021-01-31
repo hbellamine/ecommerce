@@ -6,9 +6,15 @@ import {
   getCurrentUser,
   GoogleProvider,
 } from "./../../firebase/utils";
-import { signInSuccess, signOutUserSuccess, userError, resetPasswordSuccess } from "./user.actions";
-import {handleResetPasswordAPI} from './user.helpers'
+import {
+  signInSuccess,
+  signOutUserSuccess,
+  userError,
+  resetPasswordSuccess,
+} from "./user.actions";
+import { handleResetPasswordAPI } from "./user.helpers";
 export function* getSnapshotFromUserAuth(user, additionalData = {}) {
+  //function to sign our user in
   try {
     const userRef = yield call(handleUserProfile, {
       userAuth: user,
@@ -95,22 +101,29 @@ export function* onSignUpUserStart() {
   yield takeLatest(userTypes.SIGN_UP_USER_START, signUpUser);
 }
 
-export function* resetPassword({payload: {email}}){
-  
+export function* resetPassword({ payload: { email } }) {
   try {
-    yield call(handleResetPasswordAPI,email) // allow us our promise to resolve
-    yield put(
-      resetPasswordSuccess()
-    )
+    yield call(handleResetPasswordAPI, email); // allow us our promise to resolve
+    yield put(resetPasswordSuccess());
   } catch (err) {
-    yield put(
-      userError(err)
-    )
+    yield put(userError(err));
   }
 }
 
-export function* onResetPasswordStart(){
-  yield takeLatest(userTypes.RESET_PASSWORD_START,resetPassword)
+export function* onResetPasswordStart() {
+  yield takeLatest(userTypes.RESET_PASSWORD_START, resetPassword);
+}
+
+export function* googleSignIn() {
+  try {
+    const { user } = yield auth.signInWithPopup(GoogleProvider);
+    yield getSnapshotFromUserAuth(user);
+  } catch (err) {
+    //console.log(err)
+  }
+}
+export function* onGoogleSignInStart() {
+  yield takeLatest(userTypes.GOOGLE_SIGN_IN_START, googleSignIn);
 }
 
 export default function* userSagas() {
@@ -119,6 +132,7 @@ export default function* userSagas() {
     call(onCheckUserSession),
     call(onSignOutUserStart),
     call(onSignUpUserStart),
-    call(onResetPasswordStart)
+    call(onResetPasswordStart),
+    call(onGoogleSignInStart),
   ]);
 }

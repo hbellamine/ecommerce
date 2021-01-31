@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signUpUserStart } from "./../../redux/User/user.actions";
-import { withRouter } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import "./styles.scss";
 
 import AuthWrapper from "./../AuthWrapper";
@@ -19,6 +19,7 @@ const Signup = (props) => {
 
   //useDispatch allows to dispatch the function we want from the redux store without need of using mapStateToDispatch and without Connect
   const dispatch = useDispatch();
+  const history = useHistory();
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +29,7 @@ const Signup = (props) => {
   useEffect(() => {
     if (currentUser) {
       resetForm();
-      props.history.push("/");
+      history.push("/");
     }
   }, [currentUser]);
 
@@ -121,4 +122,4 @@ const Signup = (props) => {
     </AuthWrapper>
   );
 };
-export default withRouter(Signup);
+export default Signup;
