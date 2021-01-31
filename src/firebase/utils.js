@@ -14,7 +14,7 @@ GoogleProvider.setCustomParameters({ prompt: "select_account" });
 
 
 //Logic behind authentification / create new user in firestore using google log in
-export const handleUserProfile = async (userAuth, additionalData) => {
+export const handleUserProfile = async ({userAuth, additionalData}) => {
   if (!userAuth) return;
   //destructuring the uid from userAuth
   const { uid } = userAuth;
