@@ -6,8 +6,8 @@ import {
   getCurrentUser,
   GoogleProvider,
 } from "./../../firebase/utils";
-import { signInSuccess, signOutUserSuccess, userError } from "./user.actions";
-
+import { signInSuccess, signOutUserSuccess, userError, resetPasswordSuccess } from "./user.actions";
+import {handleResetPasswordAPI} from './user.helpers'
 export function* getSnapshotFromUserAuth(user, additionalData = {}) {
   try {
     const userRef = yield call(handleUserProfile, {
@@ -95,11 +95,30 @@ export function* onSignUpUserStart() {
   yield takeLatest(userTypes.SIGN_UP_USER_START, signUpUser);
 }
 
+export function* resetPassword({payload: {email}}){
+  
+  try {
+    yield call(handleResetPasswordAPI,email) // allow us our promise to resolve
+    yield put(
+      resetPasswordSuccess()
+    )
+  } catch (err) {
+    yield put(
+      userError(err)
+    )
+  }
+}
+
+export function* onResetPasswordStart(){
+  yield takeLatest(userTypes.RESET_PASSWORD_START,resetPassword)
+}
+
 export default function* userSagas() {
   yield all([
     call(onEmailSignInStart),
     call(onCheckUserSession),
     call(onSignOutUserStart),
     call(onSignUpUserStart),
+    call(onResetPasswordStart)
   ]);
 }
