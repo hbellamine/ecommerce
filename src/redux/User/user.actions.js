@@ -10,7 +10,8 @@ export const emailSignInStart = (userCredentials) => ({
   payload: userCredentials,
 });
 
-export const signInSuccess = (user) => ({
+export const signInSuccess = 
+(user) => ({
   type: userTypes.SIGN_IN_SUCCESS,
   payload: user,
 });
@@ -110,3 +111,16 @@ export const signInWithGoogle = () => async (dispatch) => {
 export const resetAllAuthForms = () => ({
   type: userTypes.RESET_AUTH_FORMS,
 });
+
+export const checkUserSession = () => ({
+  type: userTypes.CHECK_USER_SESSION,
+
+})
+
+export const signOutUserStart = () => ({
+  type: userTypes.SIGN_OUT_USER_START,
+})
+
+export const signOutUserSuccess = () => ({
+  type : userTypes.SIGN_OUT_USER_SUCCESS
+})

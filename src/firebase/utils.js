@@ -40,3 +40,12 @@ export const handleUserProfile = async ({userAuth, additionalData}) => {
   //we return userRef to update our local components with user informations
   return userRef;
 };
+
+export const getCurrentUser = () => {
+  return new Promise((resolve,reject)=>{
+    const unsubscribe = auth.onAuthStateChanged(userAuth=>{
+      unsubscribe();
+      resolve(userAuth)
+    },reject)
+  })
+}

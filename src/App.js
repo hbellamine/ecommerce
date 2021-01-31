@@ -2,8 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Switch, Route, Redirect } from "react-router-dom";
 import "./default.scss";
-import { auth, handleUserProfile } from "./firebase/utils";
-import { setCurrentUser } from "./redux/User/user.actions";
+import { checkUserSession } from "./redux/User/user.actions";
 
 //hoc
 import WithAuth from "./hoc/withAuth";
@@ -20,14 +19,9 @@ import Dashboard from "./pages/Dashboard";
 const App = (props) => {
  const dispatch = useDispatch();
 
-  // useEffect(() => {
-
-
-  //   return () => {
-  //     // componentwillunmount to unsubscribe
-  //     authListener();
-  //   };
-  // }, []);
+  useEffect(() => {
+    dispatch(checkUserSession())
+  }, []);
 
   return (
     <div className="App">
