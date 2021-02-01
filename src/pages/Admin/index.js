@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-// import { addProductStart, fetchProductsStart, deleteProductStart } from './../../redux/Products/products.actions';
+import { addProductStart } from './../../redux/Products/products.actions';
 import Modal from './../../components/Modal';
 import FormInput from './../../components/Forms/FormInput';
 import FormSelect from './../../components/Forms/FormSelect';
@@ -50,15 +50,15 @@ const Admin = props => {
   const handleSubmit = e => {
     e.preventDefault();
 
-    // dispatch(
-    //   addProductStart({
-    //     productCategory,
-    //     productName,
-    //     productThumbnail,
-    //     productPrice,
-    //     productDesc,
-    //   })
-    // );
+    dispatch(
+      addProductStart({
+        productCategory,
+        productName,
+        productThumbnail,
+        productPrice,
+        productDesc,
+      })
+    );
     resetForm();
 
   };
