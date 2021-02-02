@@ -4,7 +4,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import "./default.scss";
 import { checkUserSession } from "./redux/User/user.actions";
 //components
-import AdminToolbar from './components/AdminToolbar'
+import AdminToolbar from "./components/AdminToolbar";
 
 //hoc
 import WithAuth from "./hoc/withAuth";
@@ -12,8 +12,8 @@ import WithAdminAuth from "./hoc/withAdminAuth";
 //layouts
 import MainLayout from "./layouts/MainLayout";
 import HomepageLayout from "./layouts/HomepageLayout";
-import AdminLayout from "./layouts/AdminLayout"
-import DashboardLayout from "./layouts/DashboardLayout"
+import AdminLayout from "./layouts/AdminLayout";
+import DashboardLayout from "./layouts/DashboardLayout";
 //pages
 import Homepage from "./pages/Homepage";
 import Registration from "./pages/Registration";
@@ -21,7 +21,7 @@ import Login from "./pages/Login";
 import Recovery from "./pages/Recovery/index";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
-import Search from './pages/Search'
+import Search from "./pages/Search";
 
 const App = (props) => {
   const dispatch = useDispatch();
@@ -44,9 +44,17 @@ const App = (props) => {
             </HomepageLayout>
           )}
         />
-                <Route
+        <Route
           exact
           path="/search"
+          render={() => (
+            <MainLayout>
+              <Search />
+            </MainLayout>
+          )}
+        />
+        <Route
+          path="/search/:filterType"
           render={() => (
             <MainLayout>
               <Search />
@@ -100,8 +108,6 @@ const App = (props) => {
             </WithAdminAuth>
           )}
         />
-
-        
       </Switch>
     </div>
   );
