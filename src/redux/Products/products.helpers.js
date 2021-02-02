@@ -10,44 +10,58 @@ export const handleAddProduct = (product) => {
         resolve();
       })
       .catch((err) => {
-        reject(err)
+        reject(err);
       });
-  })
+  });
 };
 
-export const handleFetchProducts = ({filterType}) => {
-    return new Promise((resolve,reject)=>{
-       let ref = firestore.collection('products').orderBy('createdDate');
-       if ( filterType) ref= ref.where('productCategory','==',filterType); 
-       ref
-        .get()
-        .then(snapshot => {
-            const productsArray = snapshot.docs.map(doc=>{
-                return {
-                    ...doc.data(),
-                    documentID:doc.id
-                }
-            });
-            resolve(productsArray)
-        })
-        .catch(err=>{
-            reject(err)
-        })
-    })
-}
+export const handleFetchProducts = ({ filterType, startAfterDoc,persistProducts=[] }) => {
+  return new Promise((resolve, reject) => {
+    //for pagination
+    const pageSize = 3;
+    /////
+    let ref = firestore
+      .collection("products")
+      .orderBy("createdDate")
+      .limit(pageSize);
+    if (filterType) ref = ref.where("productCategory", "==", filterType);
+    if (startAfterDoc) ref = ref.startAfter(startAfterDoc);
 
-export const handleDeleteProduct =(documentID) => {
-    return new Promise((resolve,reject)=>{
-        firestore 
-        .collection('products')
-        .orderBy('createdDate')
-        .doc(documentID)
-        .delete()
-        .then(()=>{
-            resolve();
-        })
-        .catch((err=>{
-            reject(err)
-        }))
-    })
-}
+    ref
+      .get()
+      .then((snapshot) => {
+        const totalCount = snapshot.size;
+        const data = [
+          ...persistProducts,
+          ...snapshot.docs.map((doc) => {
+            return {
+              ...doc.data(),
+              documentID: doc.id,
+            };
+          }),
+        ];
+        resolve({ data, 
+            queryDoc: snapshot.docs[totalCount - 1],
+            isLastPage: totalCount < pageSize });
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const handleDeleteProduct = (documentID) => {
+  return new Promise((resolve, reject) => {
+    firestore
+      .collection("products")
+      .orderBy("createdDate")
+      .doc(documentID)
+      .delete()
+      .then(() => {
+        resolve();
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};

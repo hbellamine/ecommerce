@@ -27,7 +27,7 @@ const Admin = (props) => {
   const [productPrice, setProductPrice] = useState(0);
   const [productDesc, setProductDesc] = useState("");
 
-  //   const { data, queryDoc, isLastPage } = products;
+    const { data,queryDoc,isLastPage } = products;
 
   useEffect(() => {
     dispatch(fetchProductsStart());
@@ -65,12 +65,12 @@ const Admin = (props) => {
   };
 
   const handleLoadMore = () => {
-    // dispatch(
-    //   fetchProductsStart({
-    //     startAfterDoc: queryDoc,
-    //     persistProducts: data
-    //   })
-    // );
+    dispatch(
+      fetchProductsStart({
+        startAfterDoc: queryDoc,
+        persistProducts: data
+      })
+    );
   };
 
   const configLoadMore = {
@@ -159,7 +159,7 @@ const Admin = (props) => {
                   cellSpacing="0"
                 >
                   <tbody>
-                    {products.map((product, index) => {
+                    {(Array.isArray(data) && data.length > 0) && data.map((product, index) => {
                       const {
                         productName,
                         productThumbnail,
@@ -193,11 +193,11 @@ const Admin = (props) => {
                 <table border="0" cellPadding="10" cellSpacing="0">
                   <tbody>
                     <tr>
-                      {/* <td>
+                      <td>
                         {!isLastPage && (
                           <LoadMore {...configLoadMore} />
                         )}
-                      </td> */}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
