@@ -39,6 +39,7 @@ export const handleDeleteProduct =(documentID) => {
     return new Promise((resolve,reject)=>{
         firestore 
         .collection('products')
+        .orderBy('createdDate')
         .doc(documentID)
         .delete()
         .then(()=>{
