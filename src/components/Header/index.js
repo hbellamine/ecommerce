@@ -1,17 +1,20 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { signOutUserStart } from "./../../redux/User/user.actions";
-import "./styles.scss";
+
 import { Link } from "react-router-dom";
 import Logo from "./../../assets/logo.png";
+import {selectCartItemsCount} from './../../redux/Cart/cart.selectors'
+import "./styles.scss";
 
-const mapState = ({ user }) => ({
-  currentUser: user.currentUser,
+const mapState = (state) => ({
+  currentUser: state.user.currentUser,
+  totalNumCartItems : selectCartItemsCount(state)
 });
 
 const Header = (props) => {
   const dispatch = useDispatch();
-  const { currentUser } = useSelector(mapState);
+  const { currentUser,cartData,totalNumCartItems } = useSelector(mapState);
   const signOut = () => {
     dispatch(signOutUserStart());
   };
@@ -34,29 +37,30 @@ const Header = (props) => {
           </ul>
         </nav>
         <div className="callToActions">
-          {currentUser && (
-            <ul>
+          <ul>
+            <li>
+              <Link>Your Cart ({totalNumCartItems})</Link>
+            </li>
+            {currentUser && [
               <li>
                 <Link to="/dashboard">My Account</Link>
-              </li>
+              </li>,
               <li>
                 <span style={{ cursor: "pointer" }} onClick={() => signOut()}>
                   LOGOUT
                 </span>
-              </li>
-            </ul>
-          )}
-          {!currentUser && (
-            <ul>
+              </li>,
+            ]}
+
+            {!currentUser && [
               <li>
                 <Link to="/registration">Register</Link>
-              </li>
-
+              </li>,
               <li>
                 <Link to="/login">Login</Link>
-              </li>
-            </ul>
-          )}
+              </li>,
+            ]}
+          </ul>
         </div>
       </div>
     </header>
