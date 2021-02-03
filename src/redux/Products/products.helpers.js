@@ -15,7 +15,11 @@ export const handleAddProduct = (product) => {
   });
 };
 
-export const handleFetchProducts = ({ filterType, startAfterDoc,persistProducts=[] }) => {
+export const handleFetchProducts = ({
+  filterType,
+  startAfterDoc,
+  persistProducts = [],
+}) => {
   return new Promise((resolve, reject) => {
     //for pagination
     const pageSize = 3;
@@ -40,9 +44,11 @@ export const handleFetchProducts = ({ filterType, startAfterDoc,persistProducts=
             };
           }),
         ];
-        resolve({ data, 
-            queryDoc: snapshot.docs[totalCount - 1],
-            isLastPage: totalCount < pageSize });
+        resolve({
+          data,
+          queryDoc: snapshot.docs[totalCount - 1],
+          isLastPage: totalCount < pageSize,
+        });
       })
       .catch((err) => {
         reject(err);
@@ -61,6 +67,23 @@ export const handleDeleteProduct = (documentID) => {
         resolve();
       })
       .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const handleFetchProduct = (productID) => {
+  return new Promise((resolve, reject) => {
+    firestore
+      .collection("products")
+      .doc(productID)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          resolve(snapshot.data());
+        }
+      })
+       .catch((err) => {
         reject(err);
       });
   });

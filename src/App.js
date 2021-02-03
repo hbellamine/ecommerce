@@ -21,6 +21,7 @@ import Login from "./pages/Login";
 import Recovery from "./pages/Recovery/index";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
+import ProductDetails from "./pages/ProductDetails";
 import Search from "./pages/Search";
 
 const App = (props) => {
@@ -50,6 +51,15 @@ const App = (props) => {
           render={() => (
             <MainLayout>
               <Search />
+            </MainLayout>
+          )}
+        />
+        <Route
+          exact
+          path="/product/:productID"
+          render={() => (
+            <MainLayout>
+              <ProductDetails />
             </MainLayout>
           )}
         />

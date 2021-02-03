@@ -1,6 +1,6 @@
 import { takeLatest, put, all, call } from "redux-saga/effects";
-import { handleAddProduct, handleFetchProducts,handleDeleteProduct } from "./products.helpers";
-import { setProducts, fetchProductsStart } from "./products.actions";
+import { handleAddProduct, handleFetchProducts,handleDeleteProduct,handleFetchProduct } from "./products.helpers";
+import { setProducts, fetchProductsStart,setProduct } from "./products.actions";
 import productsTypes from "./products.types";
 import { auth } from "./../../firebase/utils";
 //we need to listen to action and update redux store
@@ -59,6 +59,22 @@ export function* onDeleterProductStart(){
     yield takeLatest(productsTypes.DELETE_PRODUCT_START,deleteProduct)
 }
 
+export function* fetchProduct({payload}){
+  try {
+    const product = yield handleFetchProduct(payload);
+    yield put(
+      setProduct(product)
+    )
+  } catch (err) {
+    console.log(err)
+  }
+
+}
+
+export function* onFetchProductStart() {
+  yield takeLatest(productsTypes.FETCH_PRODUCT_START,fetchProduct)
+}
+
 export default function* productsSagas() {
-  yield all([call(onAddProductStart), call(onFetchProductsStart), call(onDeleterProductStart)]);
+  yield all([call(onAddProductStart), call(onFetchProductsStart), call(onDeleterProductStart), call(onFetchProductStart)]);
 }
