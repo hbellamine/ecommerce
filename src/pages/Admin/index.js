@@ -167,9 +167,9 @@ const Admin = (props) => {
                         documentID
                       } = product;
                       return (
-                        <tr>
+                        <tr key={index}>
                           <td>
-                            <img style={{width:"300px",height:"300px"}} key={index} src={productThumbnail} />
+                            <img style={{width:"300px",height:"300px"}}  src={productThumbnail} />
                           </td>
                           <td>{productName}</td>
                           <td>${productPrice}</td>

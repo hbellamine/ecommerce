@@ -16,7 +16,7 @@ const ProductCard = ({}) => {
   const { product } = useSelector(mapState);
   const dispatch = useDispatch();
 
-  const { productName, productThumbnail, productPrice } = product;
+  const { productName, productThumbnail, productPrice,productDesc } = product;
   useEffect(() => {
     dispatch(fetchProductStart(productID));
 
@@ -44,6 +44,7 @@ const ProductCard = ({}) => {
             <li>
               <h1>{productName}</h1>
             </li>
+
             <li>
               <h1><span>€{productPrice}</span></h1>
             </li>
@@ -53,6 +54,9 @@ const ProductCard = ({}) => {
               <Button {...configAddToCartBtn}>Add to card</Button>
 
               </div>
+            </li>
+            <li>
+              <span dangerouslySetInnerHTML={{__html:productDesc}}/>
             </li>
           </ul>
         </div>
