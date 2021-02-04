@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import FormInput from "./../Forms/FormInput";
+import {CardElement, useElements} from '@stripe/react-stripe-js'
 import Button from "./../Forms/Button";
 import { CountryDropdown } from "react-country-region-selector";
 import "./styles.scss";
@@ -13,6 +14,7 @@ const initialAddressState = {
   country: "",
 };
 const PaymentDetails = () => {
+    const elements=useElements()
   const [billingAddress, setBillingAddress] = useState({
     ...initialAddressState,
   });
@@ -24,7 +26,18 @@ const PaymentDetails = () => {
 
   const handleFormSubmit = async (evt) => {
     evt.preventDefault();
+    const cardElement = elements.getElement('card');
   };
+
+  const configCardElement={
+      iconStyle:'solid',
+      style:{
+          base:{
+              fontSize:'16px'
+          }
+      },
+      hidePostalCode:true
+  }
 
   const handleBilling = (evt) => {
     const { name, value } = evt.target;
@@ -165,6 +178,8 @@ const PaymentDetails = () => {
         </div>
         <div className="group">
           <h2>Card Details</h2>
+          <CardElement
+          options={configCardElement} />
         </div>
       </form>
     </div>
