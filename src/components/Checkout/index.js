@@ -4,6 +4,7 @@ import "./styles.scss";
 import {
   selectCartItems,
   selectCartItemsCount,
+  selectCartTotal
 } from "./../../redux/Cart/cart.selectors";
 import { createStructuredSelector } from "reselect";
 import Button from "./../Forms/Button";
@@ -11,10 +12,11 @@ import Item from './Item'
 
 const mapState = createStructuredSelector({
   cartItems: selectCartItems,
+  total:selectCartTotal
 });
 
 const Checkout = ({}) => {
-  const { cartItems } = useSelector(mapState);
+  const { cartItems,total } = useSelector(mapState);
   const errMsg = "You have no items in your cart"
   return (
     <div className="checkout">
@@ -60,7 +62,7 @@ const Checkout = ({}) => {
               <table align="right" border="0" cellSpacing="0" cellPadding="10">
                 <tr align="right">
                   <td>
-                    <h3>Total : </h3>
+                    <h3>Total : €{total} </h3>
                   </td>
                 </tr>
                 <tr>
