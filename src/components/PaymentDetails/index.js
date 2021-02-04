@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import FormInput from "./../Forms/FormInput";
-import {CardElement, useElements} from '@stripe/react-stripe-js'
+import { CardElement, useElements } from "@stripe/react-stripe-js";
 import Button from "./../Forms/Button";
 import { CountryDropdown } from "react-country-region-selector";
 import "./styles.scss";
@@ -14,7 +14,7 @@ const initialAddressState = {
   country: "",
 };
 const PaymentDetails = () => {
-    const elements=useElements()
+  const elements = useElements();
   const [billingAddress, setBillingAddress] = useState({
     ...initialAddressState,
   });
@@ -26,18 +26,34 @@ const PaymentDetails = () => {
 
   const handleFormSubmit = async (evt) => {
     evt.preventDefault();
-    const cardElement = elements.getElement('card');
+    const cardElement = elements.getElement("card");
+
+    if (
+      !shippingAddress.line1 ||
+      !shippingAddress.city ||
+      !shippingAddress.state ||
+      !shippingAddress.postal_code ||
+      !shippingAddress.country ||
+      !billingAddress.line1 ||
+      !billingAddress.city ||
+      !billingAddress.state ||
+      !shippingAddress.postal_code ||
+      !billingAddress.country ||
+      !recipientName || !nameOnCard 
+    ) {
+        return
+    }
   };
 
-  const configCardElement={
-      iconStyle:'solid',
-      style:{
-          base:{
-              fontSize:'16px'
-          }
+  const configCardElement = {
+    iconStyle: "solid",
+    style: {
+      base: {
+        fontSize: "16px",
       },
-      hidePostalCode:true
-  }
+    },
+    hidePostalCode: true,
+  };
 
   const handleBilling = (evt) => {
     const { name, value } = evt.target;
@@ -61,6 +77,7 @@ const PaymentDetails = () => {
         <div className="group">
           <h2>Shipping Adress</h2>
           <FormInput
+          required
             type="text"
             name="recipientName"
             placeholder="Recipient Name"
@@ -68,6 +85,7 @@ const PaymentDetails = () => {
             value={recipientName}
           />
           <FormInput
+          required
             type="text"
             name="line1"
             handleChange={(evt) => handleShipping(evt)}
@@ -82,6 +100,7 @@ const PaymentDetails = () => {
             value={shippingAddress.line2}
           />
           <FormInput
+          required
             type="text"
             name="city"
             handleChange={(evt) => handleShipping(evt)}
@@ -89,6 +108,7 @@ const PaymentDetails = () => {
             value={shippingAddress.city}
           />
           <FormInput
+          required
             type="text"
             name="state"
             handleChange={(evt) => handleShipping(evt)}
@@ -96,6 +116,7 @@ const PaymentDetails = () => {
             value={shippingAddress.state}
           />
           <FormInput
+          required
             type="text"
             name="postal_code"
             handleChange={(evt) => handleShipping(evt)}
@@ -104,6 +125,7 @@ const PaymentDetails = () => {
           />
           <div className="formRow checkoutInput">
             <CountryDropdown
+            required
               onChange={(val) =>
                 handleShipping({
                   target: {
@@ -120,6 +142,7 @@ const PaymentDetails = () => {
         <div className="group">
           <h2>Billing Adress</h2>
           <FormInput
+          required
             type="text"
             name="nameOnCard"
             handleChange={(evt) => setRecipientName(evt.target.value)}
@@ -127,6 +150,7 @@ const PaymentDetails = () => {
             value={nameOnCard}
           />
           <FormInput
+          required
             type="text"
             name="line1"
             placeholder="Line 1"
@@ -141,6 +165,7 @@ const PaymentDetails = () => {
             value={billingAddress.line2}
           />
           <FormInput
+          required
             type="text"
             name="city"
             handleChange={(evt) => handleBilling(evt)}
@@ -148,6 +173,7 @@ const PaymentDetails = () => {
             value={billingAddress.city}
           />
           <FormInput
+          required
             type="text"
             name="state"
             handleChange={(evt) => handleBilling(evt)}
@@ -155,6 +181,7 @@ const PaymentDetails = () => {
             value={billingAddress.state}
           />
           <FormInput
+          required
             type="text"
             name="postal_code"
             handleChange={(evt) => handleBilling(evt)}
@@ -162,7 +189,8 @@ const PaymentDetails = () => {
             value={billingAddress.postal_code}
           />
           <div className="formRow checkoutInput">
-          <CountryDropdown
+            <CountryDropdown
+            required
               onChange={(val) =>
                 handleBilling({
                   target: {
@@ -178,9 +206,9 @@ const PaymentDetails = () => {
         </div>
         <div className="group">
           <h2>Card Details</h2>
-          <CardElement
-          options={configCardElement} />
+          <CardElement options={configCardElement} />
         </div>
+        <Button type="submit">Pay Now</Button>
       </form>
     </div>
   );
