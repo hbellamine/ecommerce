@@ -1,0 +1,14 @@
+[debug] [2021-02-04T15:25:18.166Z] ----------------------------------------------------------------------
+[debug] [2021-02-04T15:25:18.169Z] Command:       /usr/local/bin/node /usr/local/bin/firebase functions:shell
+[debug] [2021-02-04T15:25:18.169Z] CLI Version:   8.9.0
+[debug] [2021-02-04T15:25:18.170Z] Platform:      darwin
+[debug] [2021-02-04T15:25:18.170Z] Node Version:  v14.15.0
+[debug] [2021-02-04T15:25:18.181Z] Time:          Thu Feb 04 2021 16:25:18 GMT+0100 (Central European Standard Time)
+[debug] [2021-02-04T15:25:18.181Z] ----------------------------------------------------------------------
+[debug] [2021-02-04T15:25:18.181Z] 
+[debug] [2021-02-04T15:25:18.194Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2021-02-04T15:25:18.195Z] > authorizing via signed-in user
+[debug] [2021-02-04T15:25:18.195Z] [iam] checking project ecommerce-7a260 for permissions ["firebase.projects.get"]
+[debug] [2021-02-04T15:25:18.199Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2021-02-04T15:25:18.199Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>

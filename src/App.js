@@ -24,6 +24,7 @@ import Admin from "./pages/Admin";
 import ProductDetails from "./pages/ProductDetails";
 import Search from "./pages/Search";
 import Cart from "./pages/Cart";
+import PaymentDetails from "./pages/Payment";
 
 const App = (props) => {
   const dispatch = useDispatch();
@@ -81,6 +82,17 @@ const App = (props) => {
             </MainLayout>
           )}
         />
+
+        <Route
+          exact
+          path="/payment"
+          render={() => (
+            <MainLayout>
+              <PaymentDetails />
+            </MainLayout>
+          )}
+        />
+
         <Route
           path="/registration"
           render={() => (
