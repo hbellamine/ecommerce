@@ -1,6 +1,6 @@
 import React from "react";
 import {useDispatch} from 'react-redux'
-import {removeCartItem} from './../../../redux/Cart/cart.actions'
+import {removeCartItem, addProduct,reduceCartItem} from './../../../redux/Cart/cart.actions'
 const Item = (product) => {
   const {
     productName,
@@ -15,6 +15,16 @@ const Item = (product) => {
   const handleRemoveCartItem = (documentID) => {
       dispatch(removeCartItem({documentID}))
   }
+
+  const handleAddProduct = (product) => {
+      dispatch(addProduct(product))
+  }
+
+  const handleReduceItem = (product) => {
+      dispatch(
+          reduceCartItem(product)
+      )
+  }
   return <table className="cartItem" border="0" cellSpacing="0" cellPadding="10">
       <tbody>
           <tr>
@@ -25,8 +35,14 @@ const Item = (product) => {
                   {productName}
               </td>
               <td>
+                  <span className="cartBtn" onClick={()=>{handleReduceItem(product)}}>
+                      {` - `}
+                  </span>
                   <span>
                       {quantity}
+                  </span>
+                  <span onClick={()=>{handleAddProduct(product)}} className="cartBtn">
+                      {` + `}
                   </span>
               </td>
               <td>
