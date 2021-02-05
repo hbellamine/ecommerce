@@ -1,8 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import FormInput from "./../Forms/FormInput";
-import { CardElement, useElements } from "@stripe/react-stripe-js";
 import Button from "./../Forms/Button";
+import { clearCart } from "./../../redux/Cart/cart.actions";
+import { saveOrderHistory } from "./../../redux/Orders/orders.actions";
 import { CountryDropdown } from "react-country-region-selector";
+import { apiInstance } from "./../../Utils";
+import {
+  selectCartTotal,
+  selectCartItemsCount,
+  selectCartItems,
+} from "./../../redux/Cart/cart.selectors";
+import { createStructuredSelector } from "reselect";
+import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import "./styles.scss";
 
 const initialAddressState = {
@@ -13,8 +24,19 @@ const initialAddressState = {
   postal_code: "",
   country: "",
 };
+
+const mapState = createStructuredSelector({
+  total: selectCartTotal,
+  itemCount: selectCartItemsCount,
+  cartItems: selectCartItems,
+});
+
 const PaymentDetails = () => {
+  const stripe = useStripe();
   const elements = useElements();
+  const history = useHistory();
+  const { total, itemCount, cartItems } = useSelector(mapState);
+  const dispatch = useDispatch();
   const [billingAddress, setBillingAddress] = useState({
     ...initialAddressState,
   });
@@ -23,6 +45,29 @@ const PaymentDetails = () => {
   });
   const [recipientName, setRecipientName] = useState("");
   const [nameOnCard, setNameOnCard] = useState("");
+
+  useEffect(() => {
+    if (itemCount < 1) {
+      history.push("/dashboard");
+
+    }
+  }, [itemCount]);
+
+  const handleShipping = (evt) => {
+    const { name, value } = evt.target;
+    setShippingAddress({
+      ...shippingAddress,
+      [name]: value,
+    });
+  };
+
+  const handleBilling = (evt) => {
+    const { name, value } = evt.target;
+    setBillingAddress({
+      ...billingAddress,
+      [name]: value,
+    });
+  };
 
   const handleFormSubmit = async (evt) => {
     evt.preventDefault();
@@ -37,12 +82,66 @@ const PaymentDetails = () => {
       !billingAddress.line1 ||
       !billingAddress.city ||
       !billingAddress.state ||
-      !shippingAddress.postal_code ||
+      !billingAddress.postal_code ||
       !billingAddress.country ||
-      !recipientName || !nameOnCard 
+      !recipientName ||
+      !nameOnCard
     ) {
-        return
+      return;
     }
+
+    apiInstance
+      .post('/payments/create', {
+        amount: total * 100,
+        shipping: {
+          name: recipientName,
+          address: {
+            ...shippingAddress,
+          },
+        },
+      })
+      .then(({ data: clientSecret }) => {
+        stripe
+          .createPaymentMethod({
+            type: "card",
+            card: cardElement,
+            billing_details: {
+              name: nameOnCard,
+              address: {
+                ...billingAddress,
+              },
+            },
+          })
+          .then(({ paymentMethod }) => {
+            stripe
+              .confirmCardPayment(clientSecret, {
+                payment_method: paymentMethod.id,
+              })
+              .then(({ paymentIntent }) => {
+                const configOrder = {
+                  orderTotal: total,
+                  orderItems: cartItems.map((item) => {
+                    const {
+                      documentID,
+                      productThumnail,
+                      productName,
+                      productPrice,
+                      quantity,
+                    } = item;
+
+                    return {
+                      documentID,
+                      productThumnail,
+                      productName,
+                      productPrice,
+                      quantity
+                    }
+                  }),
+                };
+                dispatch(saveOrderHistory(configOrder));
+              });
+          });
+      });
   };
 
   const configCardElement = {
@@ -55,77 +154,68 @@ const PaymentDetails = () => {
     hidePostalCode: true,
   };
 
-  const handleBilling = (evt) => {
-    const { name, value } = evt.target;
-
-    setBillingAddress({
-      ...billingAddress,
-      [name]: value,
-    });
-  };
-
-  const handleShipping = (evt) => {
-    const { name, value } = evt.target;
-    setShippingAddress({
-      ...shippingAddress,
-      [name]: value,
-    });
-  };
   return (
     <div className="paymentDetails">
       <form onSubmit={handleFormSubmit}>
         <div className="group">
-          <h2>Shipping Adress</h2>
+          <h2>Shipping Address</h2>
+
           <FormInput
-          required
-            type="text"
-            name="recipientName"
+            required
             placeholder="Recipient Name"
+            name="recipientName"
             handleChange={(evt) => setRecipientName(evt.target.value)}
             value={recipientName}
-          />
-          <FormInput
-          required
             type="text"
+          />
+
+          <FormInput
+            required
+            placeholder="Line 1"
             name="line1"
             handleChange={(evt) => handleShipping(evt)}
-            placeholder="Line 1"
             value={shippingAddress.line1}
-          />
-          <FormInput
             type="text"
+          />
+
+          <FormInput
+            placeholder="Line 2"
             name="line2"
             handleChange={(evt) => handleShipping(evt)}
-            placeholder="Line 2"
             value={shippingAddress.line2}
-          />
-          <FormInput
-          required
             type="text"
+          />
+
+          <FormInput
+            required
+            placeholder="City"
             name="city"
             handleChange={(evt) => handleShipping(evt)}
-            placeholder=" City "
             value={shippingAddress.city}
-          />
-          <FormInput
-          required
             type="text"
+          />
+
+          <FormInput
+            required
+            placeholder="State"
             name="state"
             handleChange={(evt) => handleShipping(evt)}
-            placeholder="State"
             value={shippingAddress.state}
-          />
-          <FormInput
-          required
             type="text"
+          />
+
+          <FormInput
+            required
+            placeholder="Postal Code"
             name="postal_code"
             handleChange={(evt) => handleShipping(evt)}
-            placeholder=" Postal Code"
             value={shippingAddress.postal_code}
+            type="text"
           />
+
           <div className="formRow checkoutInput">
             <CountryDropdown
-            required
+              required
               onChange={(val) =>
                 handleShipping({
                   target: {
@@ -139,58 +229,66 @@ const PaymentDetails = () => {
             />
           </div>
         </div>
+
         <div className="group">
-          <h2>Billing Adress</h2>
+          <h2>Billing Address</h2>
+
           <FormInput
-          required
-            type="text"
-            name="nameOnCard"
-            handleChange={(evt) => setRecipientName(evt.target.value)}
+            required
             placeholder="Name on Card"
+            name="nameOnCard"
+            handleChange={(evt) => setNameOnCard(evt.target.value)}
             value={nameOnCard}
-          />
-          <FormInput
-          required
             type="text"
-            name="line1"
+          />
+
+          <FormInput
+            required
             placeholder="Line 1"
+            name="line1"
             handleChange={(evt) => handleBilling(evt)}
             value={billingAddress.line1}
-          />
-          <FormInput
             type="text"
+          />
+
+          <FormInput
+            placeholder="Line 2"
             name="line2"
             handleChange={(evt) => handleBilling(evt)}
-            placeholder="Line 2"
             value={billingAddress.line2}
-          />
-          <FormInput
-          required
             type="text"
+          />
+
+          <FormInput
+            required
+            placeholder="City"
             name="city"
             handleChange={(evt) => handleBilling(evt)}
-            placeholder="City"
             value={billingAddress.city}
-          />
-          <FormInput
-          required
             type="text"
+          />
+
+          <FormInput
+            required
+            placeholder="State"
             name="state"
             handleChange={(evt) => handleBilling(evt)}
-            placeholder="State"
             value={billingAddress.state}
-          />
-          <FormInput
-          required
             type="text"
+          />
+
+          <FormInput
+            required
+            placeholder="Postal Code"
             name="postal_code"
             handleChange={(evt) => handleBilling(evt)}
-            placeholder=" Postal Code"
             value={billingAddress.postal_code}
+            type="text"
           />
+
           <div className="formRow checkoutInput">
             <CountryDropdown
-            required
+              required
               onChange={(val) =>
                 handleBilling({
                   target: {
@@ -204,10 +302,13 @@ const PaymentDetails = () => {
             />
           </div>
         </div>
+
         <div className="group">
           <h2>Card Details</h2>
+
           <CardElement options={configCardElement} />
         </div>
+
         <Button type="submit">Pay Now</Button>
       </form>
     </div>

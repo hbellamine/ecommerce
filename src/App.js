@@ -5,7 +5,6 @@ import "./default.scss";
 import { checkUserSession } from "./redux/User/user.actions";
 //components
 import AdminToolbar from "./components/AdminToolbar";
-
 //hoc
 import WithAuth from "./hoc/withAuth";
 import WithAdminAuth from "./hoc/withAdminAuth";
@@ -24,7 +23,7 @@ import Admin from "./pages/Admin";
 import ProductDetails from "./pages/ProductDetails";
 import Search from "./pages/Search";
 import Cart from "./pages/Cart";
-import PaymentDetails from "./pages/Payment";
+import Payment from "./pages/Payment";
 
 const App = (props) => {
   const dispatch = useDispatch();
@@ -84,12 +83,13 @@ const App = (props) => {
         />
 
         <Route
-          exact
           path="/payment"
           render={() => (
-            <MainLayout>
-              <PaymentDetails />
-            </MainLayout>
+            <WithAuth>
+              <MainLayout>
+                <Payment />
+              </MainLayout>
+            </WithAuth>
           )}
         />
 
