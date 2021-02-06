@@ -49,7 +49,6 @@ const PaymentDetails = () => {
   useEffect(() => {
     if (itemCount < 1) {
       history.push("/dashboard");
-
     }
   }, [itemCount]);
 
@@ -91,7 +90,7 @@ const PaymentDetails = () => {
     }
 
     apiInstance
-      .post('/payments/create', {
+      .post("/payments/create", {
         amount: total * 100,
         shipping: {
           name: recipientName,
@@ -123,7 +122,7 @@ const PaymentDetails = () => {
                   orderItems: cartItems.map((item) => {
                     const {
                       documentID,
-                      productThumnail,
+                      productThumbnail,
                       productName,
                       productPrice,
                       quantity,
@@ -131,13 +130,14 @@ const PaymentDetails = () => {
 
                     return {
                       documentID,
-                      productThumnail,
+                      productThumbnail,
                       productName,
                       productPrice,
-                      quantity
-                    }
+                      quantity,
+                    };
                   }),
                 };
+
                 dispatch(saveOrderHistory(configOrder));
               });
           });
